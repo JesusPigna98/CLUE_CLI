@@ -20,15 +20,12 @@ class juego:
         self.personajes_random = random.sample(self.personajes_iniciales, len(self.personajes_iniciales))
         self.lugares_random = random.sample(self.lugares_iniciales, len(self.lugares_iniciales))
         self.armas_random = random.sample(self.armas_iniciales, len(self.armas_iniciales))
-        return self.personajes_random, self.lugares_random, self.armas_random ##Retornamos en orden: Culpable, lugar, arma
 
     def elegir_culpable(self):
         random.seed(time.time())
         self.culpable = random.choice(self.personajes_random)
         self.lugar_culpable = random.choice(self.lugares_random)
         self.arma_culpable = random.choice(self.armas_random)
-
-        return self.culpable, self.lugar_culpable, self.arma_culpable ##Retornamos en orden: Culpable, lugar, arma
 
     
     def eleccion_nombres(self):
@@ -128,11 +125,8 @@ class juego:
                 self.operacion_final(self.personaje_final,self.lugar_final,self.arma_final)
 
         
-        
-
-
-
-    def opciones_juego(self):
+##------Función principal para seleccionar las opciones por 5 rondas. El contador inicia en 1.------##
+    def iniciar_juego(self):
         for i in range(6):
             self.contador += 1
             self.x = False
@@ -155,7 +149,7 @@ class juego:
                 else:
                     self.x = True
 
-        ##Función final
+##------Función que elige la historia de forma aleatoria dependiendo de el objeto, lugar o persona seleccionada------##
     def historias_personajes(self, posicion):
         historia = ''
       
@@ -172,7 +166,7 @@ class juego:
             historia = "buscando unos objetos faltantes desde el dia del asesinato"
 
 
-        print(f"{self.personajes_random[posicion]} comenta que estaba {historia} en {self.lugares_random[posicion]} y vio el arma {self.armas_random[posicion]}")
+        print(f"{self.personajes_random[posicion]} comenta que estaba {historia} en {self.lugares_random[posicion]} y vio el objeto {self.armas_random[posicion]}")
         
         if self.personajes_random[posicion] == self.culpable:
             print(f"-Juan, el mayordomo, comenta que le es dificil recordar haber visto a {self.personajes_random[posicion]} durante el dia")
@@ -190,6 +184,7 @@ class juego:
             print(f"-Juan, el mayordomo, se aseguro de guardar el objeto {self.armas_random[posicion]} en su lugar sin excepcion")
 
 
+##------Función final que recibe las elecciones finales del jugador------##
     def operacion_final(self,personaje, lugar, arma):
         if personaje == self.culpable and lugar == self.lugar_culpable and arma == self.arma_culpable:
             print("¡¡FELICIDADES!! Has dado con el asesino, el lugar y el arma de forma impecable")
@@ -209,10 +204,8 @@ class juego:
 
 
 
-
-                    
-
-    def eleccion_historia(self,i): ##Switch-case para repetir unicamente 5 veces
+##------Switchers para historia, arma, personaje y lugar------##
+    def eleccion_historia(self,i):
         switch = {
                 1:self.eleccion_nombres,
                 2:self.eleccion_lugar,
@@ -254,10 +247,13 @@ class juego:
         return switch[i]
 
     
-"""
+
 def instrucciones():
-    print("*****")
-"""
+    print("\t\t*****CLUE - LA CASONA*****\n")
+    print("John era un empresario muy exitoso que vivia en la casona 'Los Muertos', construida por el mismo.")
+    print("El vivia con sus 5 hermanos que le tenian envidia por sus exitos y fortuna.")
+    print("El dia de hoy.. John fue asesinado a sangre fria por alguien dentro de la casona y con un objeto perteneciente a la misma.\n Es tu trabajo encontrar al asesino, donde fue cometido el asesinato y el arma utilizada.\n\n\n")
+    print("Hay 5 personas, armas y lugares donde se pudo cometer el asesinato. Tienes unicamente 5 rondas para deducir todo el crimen. SUERTE\n\n\n\n")
 
 def clear():
     # windows
@@ -268,18 +264,18 @@ def clear():
     else:
         _ = system('clear')
 
+
+
 ##----------------Main-----------------##
 personajes_iniciales = ["Filiponcio", "Facundo", "Giselle", "Pancracio", "Chepina"]
 armas_iniciales = ["Bolillo", "Sarten", "Cuchillo", "Hacha", "Machete"]
 lugares_iniciales = ["el Almacen", "la Cocina", "el Taller", "la Sala", "el Jardin"]
 
-
+instrucciones()
 obj_inicializacion = juego(personajes_iniciales, armas_iniciales, lugares_iniciales)
-
-personajes, lugares, armas = obj_inicializacion.randomizar_historia()
-culpable_personaje, culpable_lugar, culpable_arma = obj_inicializacion.elegir_culpable()
-
-obj_inicializacion.opciones_juego()
+obj_inicializacion.randomizar_historia()
+obj_inicializacion.elegir_culpable()
+obj_inicializacion.iniciar_juego()
 
 
 
