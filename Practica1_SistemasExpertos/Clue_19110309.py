@@ -2,10 +2,14 @@
 ##Practica1 - CLUE
 import random
 import time
+from os import system, name
 
 class juego:
     contador = 0
     x = False
+    personaje_final = ''
+    lugar_final = ''
+    arma_final = ''
 
     def __init__(self, personajes_iniciales, armas_iniciales, lugares_iniciales) -> None:
         self.personajes_iniciales = personajes_iniciales
@@ -14,8 +18,8 @@ class juego:
 
     def randomizar_historia(self):
         self.personajes_random = random.sample(self.personajes_iniciales, len(self.personajes_iniciales))
-        self.lugares_random = random.sample(self.armas_iniciales, len(self.lugares_iniciales))
-        self.armas_random = random.sample(self.lugares_iniciales, len(self.armas_iniciales))
+        self.lugares_random = random.sample(self.lugares_iniciales, len(self.lugares_iniciales))
+        self.armas_random = random.sample(self.armas_iniciales, len(self.armas_iniciales))
         return self.personajes_random, self.lugares_random, self.armas_random ##Retornamos en orden: Culpable, lugar, arma
 
     def elegir_culpable(self):
@@ -28,15 +32,105 @@ class juego:
 
     
     def eleccion_nombres(self):
-        print("La espiga de autlan")
-        self.x = True
+        revisador = True
+
+        print(f"****Eleccion de Personaje*****")
+
+        while revisador == True:
+            print("Elige uno de los personajes:\n")
+            for i in range(len(self.personajes_random)):
+                print(f"{i+1}- {self.personajes_random[i]}\n")
+
+            opc = int(input("Opcion: "))    
+
+            if(self.contador <6):
+                try:
+                    nombre_elegido = self.personaje(opc)
+                    clear()
+                    print(f"Personaje Elegido: {nombre_elegido}\trestan: {6-self.contador} oportunidades\n")
+                
+                except (ValueError, KeyError):
+                    print("Personaje no existente")
+                
+                else:
+                    revisador = False
+                    self.historias_personajes(opc-1)
+
+            else:
+                revisador = False
+                nombre_elegido = self.personaje(opc)
+                self.personaje_final = nombre_elegido
+                self.eleccion_lugar()
+            
 
     def eleccion_lugar(self):
-        print("kepedo")
-        self.x = True
+        revisador = True
+        print(f"****Eleccion de Lugar*****\t restan: {6-self.contador} oportunidades\n")
+
+        while revisador == True:
+            print("Elige uno de los lugares:\n")
+            for i in range(len(self.lugares_random)):
+                print(f"{i+1}- {self.lugares_random[i]}\n")
+            
+            opc = int(input("Opcion: "))
+
+            if(self.contador <6):
+                try:
+                    lugar_elegido = self.lugar(opc)
+                    clear()
+                    print(f"Lugar Elegido: {lugar_elegido}\trestan: {6-self.contador} oportunidades\n")
+                
+                except (ValueError, KeyError):
+                    print("Lugar no existente")
+                
+                else:
+                    revisador = False
+                    self.historias_personajes(opc-1)
+
+            else:
+                revisador = False
+                lugar_elegido = self.lugar(opc)
+                self.lugar_final = lugar_elegido
+                self.eleccion_arma()
+                
+
+
+
 
     def eleccion_arma(self):
-        self.x = True
+        revisador = True
+        print(f"****Eleccion de Arma*****\t restan: {6-self.contador} oportunidades\n")
+
+        while revisador == True:
+            print("Elige una de las armas:\n")
+            for i in range(len(self.armas_random)):
+                print(f"{i+1}- {self.armas_random[i]}\n")
+    
+            opc = int(input("Opcion: "))
+
+            if(self.contador <6):
+                try:
+                    arma_elegida = self.arma(opc)
+                    clear()
+                    print(f"Arma Elegida: {arma_elegida}\trestan: {6-self.contador} oportunidades\n")
+                
+                except (ValueError, KeyError):
+                    print("Arma no existente")
+
+                else:
+                    revisador = False
+                    self.historias_personajes(opc-1)
+
+            else:
+                revisador = False
+                arma_elegida = self.arma(opc)
+                self.arma_final = arma_elegida
+                self.operacion_final(self.personaje_final,self.lugar_final,self.arma_final)
+
+        
+        
+
+
 
     def opciones_juego(self):
         for i in range(6):
@@ -45,21 +139,80 @@ class juego:
 
             while self.x == False:
                 try:
-                    if self.contador == 5:
+                    if self.contador == 6:
                         self.x = True
+                        clear()
+                        print(f"Se acabaron las opciones... es momento de decidir ¡quien es el asesino!")
+                        self.eleccion_nombres()
                         break
 
                     opc = int(input("Elige una categoria a investigar:\n 1-Personaje\n 2-Lugar\n 3-Arma\nCategoria:"))
-                    self.eleccion(opc)    
+                    self.eleccion_historia(opc)    
 
                 except (ValueError, KeyError):
                     print("****Categoria invalida****")
+                
+                else:
+                    self.x = True
 
         ##Función final
-                
+    def historias_personajes(self, posicion):
+        historia = ''
+      
+        ##Armado de las 5 historias##
+        if self.lugares_random[posicion] == "la Sala":
+            historia = "fumandose un cigarrito de procedencia desconocida"
+        elif self.lugares_random[posicion] == "la Cocina":
+            historia = "entrandole duro a un taco de camaron sobrante del dia de ayer"
+        elif self.lugares_random[posicion] == "el Taller":
+            historia = "afilando unos cuchillos para la cena del fin de semana"
+        elif self.lugares_random[posicion] == "el Jardin":
+            historia = "enterrando a jerry, el gato, que murio el mismo dia que John"
+        elif self.lugares_random[posicion] == "el Almacen":
+            historia = "buscando unos objetos faltantes desde el dia del asesinato"
+
+
+        print(f"{self.personajes_random[posicion]} comenta que estaba {historia} en {self.lugares_random[posicion]} y vio el arma {self.armas_random[posicion]}")
+        
+        if self.personajes_random[posicion] == self.culpable:
+            print(f"-Juan, el mayordomo, comenta que le es dificil recordar haber visto a {self.personajes_random[posicion]} durante el dia")
+        else:
+            print(f"-{self.personajes_random[posicion]} fue visto por Juan, el mayordomo mientras hacia su recorrido por la casona")
+        
+        if self.lugares_random[posicion] == self.lugar_culpable:
+            print(f"-Desafortunadamente Juan, el mayordomo, no pudo visitar {self.lugares_random[posicion]}, ya que tuvo que pasear a los perros")
+        else:
+            print(f"-Juan, el mayordomo, estuvo en {self.lugares_random[posicion]} y aprovecho para terminar unos pendientes")
+        
+        if self.armas_random[posicion] == self.arma_culpable:
+            print(f"-Juan, el mayordomo, menciona que hacia falta el objeto {self.armas_random[posicion]} desde hace un par de dias")
+        else:
+            print(f"-Juan, el mayordomo, se aseguro de guardar el objeto {self.armas_random[posicion]} en su lugar sin excepcion")
+
+
+    def operacion_final(self,personaje, lugar, arma):
+        if personaje == self.culpable and lugar == self.lugar_culpable and arma == self.arma_culpable:
+            print("¡¡FELICIDADES!! Has dado con el asesino, el lugar y el arma de forma impecable")
+        
+        else:
+            clear()
+            print(f"Has perdido :( ¡suerte para la proxima! mis elecciones: [{personaje},{lugar},{arma}]\n")
+            print("\t***********NOTAS DE DETECTIVE***********\n")
+            if(personaje != self.culpable):
+                print(f"{personaje} era inocente ya que Juan, el mayordomo, lo vio mientras hacia su reccorido")
+            
+            if(lugar != self.lugar_culpable):
+                print(f"{lugar} no fue el lugar del asesinato ya que Juan, el mayordomo, visito el area mientras hacia su recorrido")
+            
+            if(arma != self.arma_culpable):
+                print(f"{arma} no fue el arma utilizada en el asesinato ya que fue guardada en su lugar por Juan, el mayordomo")
+
+
+
+
                     
 
-    def eleccion(self,i): ##Switch-case para repetir unicamente 5 veces
+    def eleccion_historia(self,i): ##Switch-case para repetir unicamente 5 veces
         switch = {
                 1:self.eleccion_nombres,
                 2:self.eleccion_lugar,
@@ -67,8 +220,38 @@ class juego:
             }
         
         return switch[i]()
-            
 
+    def personaje(self,i):
+        switch = {
+                1:self.personajes_random[0],
+                2:self.personajes_random[1],
+                3:self.personajes_random[2],
+                4:self.personajes_random[3],
+                5:self.personajes_random[4]
+            }
+
+        return switch[i]
+
+    def lugar(self,i):
+        switch = {
+                1:self.lugares_random[0],
+                2:self.lugares_random[1],
+                3:self.lugares_random[2],
+                4:self.lugares_random[3],
+                5:self.lugares_random[4]
+            }
+        
+        return switch[i]
+
+    def arma(self,i):
+        switch = {
+                1:self.armas_random[0],
+                2:self.armas_random[1],
+                3:self.armas_random[2],
+                4:self.armas_random[3],
+                5:self.armas_random[4]
+            }
+        return switch[i]
 
     
 """
@@ -76,13 +259,19 @@ def instrucciones():
     print("*****")
 """
 
-    
-
+def clear():
+    # windows
+    if name == 'nt':
+        _ = system('cls')
+  
+    #mac o linux
+    else:
+        _ = system('clear')
 
 ##----------------Main-----------------##
 personajes_iniciales = ["Filiponcio", "Facundo", "Giselle", "Pancracio", "Chepina"]
 armas_iniciales = ["Bolillo", "Sarten", "Cuchillo", "Hacha", "Machete"]
-lugares_iniciales = ["Almacen", "Cocina", "Herreria", "Sala", "Jardin"]
+lugares_iniciales = ["el Almacen", "la Cocina", "el Taller", "la Sala", "el Jardin"]
 
 
 obj_inicializacion = juego(personajes_iniciales, armas_iniciales, lugares_iniciales)
